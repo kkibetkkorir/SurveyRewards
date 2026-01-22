@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/logo32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/logo16.png" />
+
+  <link rel="apple-touch-icon" href="/logo192.png" />
+  <link rel="manifest" href="/manifest.json" crossorigin="anonymous" />
+  <link rel="shortcut icon" type="image/x-icon" href="/logo512.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#059669">
+  <meta name="description"
+    content="Complete surveys and earn real money. Get paid for your opinions with instant withdrawals to M-Pesa. Access premium surveys with affordable packages." />
+  <meta name="keywords"
+    content="Earn Money, Paid Surveys, Online Surveys, Make Money, Kenya Surveys, M-Pesa, Rewards, Survey App">
+  <meta name="author" content="SurveyRewards">
+  <link rel="canonical" href="/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="SurveyRewards - Earn Money Taking Surveys" />
+  <meta property="og:description"
+    content="Complete surveys and earn real money. Get paid for your opinions with instant withdrawals to M-Pesa." />
+  <meta property="og:image" content="/logo512.png" />
+  <meta property="og:url" content="https://surveyrewards-ji2f.onrender.com/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SurveyRewards - Earn Money Taking Surveys" />
+  <meta name="twitter:description"
+    content="Complete surveys and earn real money. Get paid for your opinions with instant withdrawals to M-Pesa." />
+  <meta name="twitter:image" content="/logo512.png" />
+
+  <!-- iOS -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="SurveyRewards" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!--Add icons for various Apple device sizes-->
+  <link rel="apple-touch-icon" sizes="120x120" href="/logo120.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="/logo152.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/logo180.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="/logo180.png" />
+
+  <!-- Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#059669">
+  <meta name="application-name" content="SurveyRewards">
+
+  <!--Control how search engines index your page-->
+  <meta name="robots" content="index, follow" />
+
+  <!--If your site supports multiple languages, add alternate links-->
+  <link rel="alternate" href="https://surveyrewards-ji2f.onrender.com/" hreflang="en" />
+
+  <!-- Preconnect to important origins -->
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com">
+  <link rel="preconnect" href="https://firestore.googleapis.com">
+  <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
+  <link rel="preconnect" href="https://genuine-flow-production-b0ae.up.railway.app">
+
+  <title>SurveyRewards - Earn Money Taking Surveys</title>
+
+  <!-- Google AdSense (if needed) -->
+  <!-- <meta name="google-adsense-account" content="ca-pub-YOUR_PUBLISHER_ID"> -->
+
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+  <!-- Add to Home Screen prompt styles -->
+  <style>
+    #installPrompt {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #059669;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      max-width: 90%;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateX(-50%) translateY(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    #installPrompt button {
+      background: white;
+      color: #059669;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    #installPrompt button:hover {
+      background: #f0f0f0;
+    }
+
+    #installPrompt .close {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 6px 12px;
+      margin-left: 10px;
+    }
+
+    .offline-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #ffc107;
+      color: #333;
+      text-align: center;
+      padding: 10px;
+      z-index: 10000;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <!-- Add to Home Screen Prompt -->
+  <div id="installPrompt" style="display: none;">
+    <i class="fas fa-download"></i>
+    <span>Install SurveyRewards for better experience</span>
+    <button id="installButton">Install</button>
+    <button id="closePrompt" class="close">×</button>
+  </div>
+
+  <!-- Offline Indicator -->
+  <div id="offlineIndicator" class="offline-indicator" style="display: none;">
+    <i class="fas fa-wifi-slash"></i> You are currently offline. Some features may be limited.
+  </div>
+
+  <script type="module" src="/src/main.jsx"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+            // Check for updates
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing;
+              console.log('New service worker found:', newWorker);
+
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New content is available
+                  if (confirm('New version available! Reload to update?')) {
+                    window.location.reload();
+                  }
+                }
+              });
+            });
+          })
+          .catch(err => {
+            console.log('ServiceWorker registration failed: ', err);
+          });
+      });
+    }
+
+    // Online/offline detection
+    window.addEventListener('online', () => {
+      document.getElementById('offlineIndicator').style.display = 'none';
+      console.log('You are online');
+    });
+
+    window.addEventListener('offline', () => {
+      document.getElementById('offlineIndicator').style.display = 'block';
+      console.log('You are offline');
+    });
+
+    // Initialize online status
+    if (!navigator.onLine) {
+      document.getElementById('offlineIndicator').style.display = 'block';
+    }
+
+    // Add to Home Screen prompt
+    let deferredPrompt;
+    const installPrompt = document.getElementById('installPrompt');
+    const installButton = document.getElementById('installButton');
+    const closePrompt = document.getElementById('closePrompt');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later
+      deferredPrompt = e;
+
+      // Show the install prompt
+      setTimeout(() => {
+        installPrompt.style.display = 'flex';
+      }, 3000); // Show after 3 seconds
+
+      // Log the platforms
+      console.log('PWA can be installed on:', e.platforms);
+    });
+
+    installButton.addEventListener('click', () => {
+      // Hide the install prompt
+      installPrompt.style.display = 'none';
+
+      // Show the install prompt
+      deferredPrompt.prompt();
+
+      // Wait for the user to respond to the prompt
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted the install prompt');
+        } else {
+          console.log('User dismissed the install prompt');
+        }
+        deferredPrompt = null;
+      });
+    });
+
+    closePrompt.addEventListener('click', () => {
+      installPrompt.style.display = 'none';
+      // Store in localStorage that user dismissed the prompt
+      localStorage.setItem('installPromptDismissed', 'true');
+    });
+
+    // Check if user already dismissed the prompt
+    if (localStorage.getItem('installPromptDismissed') === 'true') {
+      installPrompt.style.display = 'none';
+    }
+
+    // Detect if app is running in standalone mode
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('Running in standalone mode');
+      document.documentElement.setAttribute('data-standalone', 'true');
+    }
+
+    // Listen for app installed event
+    window.addEventListener('appinstalled', () => {
+      console.log('SurveyRewards was installed successfully');
+      installPrompt.style.display = 'none';
+      // Track installation in analytics if needed
+    });
+  </script>
+
+  <!-- SweetAlert2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

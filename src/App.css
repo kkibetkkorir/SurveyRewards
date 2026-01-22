@@ -1,0 +1,726 @@
+/* App.css - Common Styles for All Components */
+
+:root {
+    --primary: #059669;
+    --primary-light: #10b981;
+    --secondary: #065f46;
+    --white: #ffffff;
+    --black: #1a1a1a;
+    --gray: #6c757d;
+    --light-gray: #f8f9fa;
+    --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+
+    --border-radius: 12px;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #dc3545;
+    --bonus-gold: #f59e0b;
+    --bonus-silver: #94a3b8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+body {
+    background: var(--light-gray);
+    min-height: 100vh;
+    /*padding-bottom: 70px;  index.html*/
+
+    /*width: 100%;
+    overflow-x: hidden;*/
+
+
+    padding-bottom: 80px;
+
+    /*padding-bottom: 30px;*/
+}
+
+/* Common Header Styles */
+.header {
+    background: var(--gradient);
+    color: var(--white);
+    padding: 60px 20px 20px;
+    /*position: relative;*/
+}
+
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo h1 {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.balance-display {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+
+    /*added*/
+    border: none;
+    cursor: pointer;
+}
+
+.header h1 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Common Card Styles */
+.card {
+    background: var(--white);
+    border-radius: 15px;
+    margin: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Common Form Styles */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--black);
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+.form-input:disabled {
+    background: #f5f5f5;
+    color: var(--gray);
+    cursor: not-allowed;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray);
+}
+
+.input-with-icon input,
+.input-with-icon select {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.input-with-icon input:focus,
+.input-with-icon select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+/* Common Button Styles */
+.btn {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-secondary {
+    background: var(--white);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-small {
+    padding: 10px 15px;
+    font-size: 14px;
+}
+
+.btn-large {
+    padding: 16px;
+    font-size: 16px;
+    width: 100%;
+}
+
+/* Common Section Titles */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--black);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Common Messages */
+.error-message {
+    color: var(--danger);
+    font-size: 14px;
+    margin-top: 10px;
+    display: block;
+}
+
+.success-message {
+    color: var(--primary);
+    font-size: 14px;
+    margin-top: 10px;
+    display: block;
+}
+
+.info-message {
+    background: #e8f5e9;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    border-left: 4px solid var(--primary);
+    font-size: 14px;
+    color: #2e7d32;
+}
+
+.info-message i {
+    margin-right: 8px;
+}
+
+/* Common Loader Styles */
+.loader {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Common Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    max-width: 400px;
+    width: 100%;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    color: var(--black);
+    font-size: 20px;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--gray);
+    cursor: pointer;
+}
+
+/* Common Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--white);
+    display: flex;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+    z-index: 1000;
+}
+
+.nav-item {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: var(--gray);
+    padding: 10px;
+}
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+.nav-item i {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+.nav-item span {
+    font-size: 12px;
+}
+
+/* Common Balance Display */
+.balance-card {
+    background: var(--white);
+    border-radius: 15px;
+    margin: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.balance-label {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.balance-amount {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+/* Common Quick Amounts Grid */
+.quick-amounts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.amount-btn {
+    padding: 12px;
+    background: var(--white);
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.amount-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.amount-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Common Status Badges */
+.status-badge {
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    text-transform: capitalize;
+}
+
+.status-completed {
+    background: #d1fae5;
+    color: var(--success);
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: var(--warning);
+}
+
+.status-failed {
+    background: #fee2e2;
+    color: var(--danger);
+}
+
+.status-active {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Common Animation Classes */
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+.slide-up {
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Common Responsive Styles */
+@media (max-width: 480px) {
+    .header {
+        padding: 50px 15px 15px;
+    }
+
+    .card,
+    .balance-card {
+        margin: 15px;
+        padding: 15px;
+    }
+
+    .quick-amounts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bottom-nav {
+        padding: 8px 0;
+    }
+
+    .section-title {
+        font-size: 16px;
+    }
+
+    .balance-amount {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .btn-large {
+        padding: 14px;
+        font-size: 15px;
+    }
+
+    .modal-content {
+        padding: 20px;
+        margin: 15px;
+    }
+}
+
+/* Common Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.d-block {
+    display: block;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-10 {
+    gap: 10px;
+}
+
+.gap-20 {
+    gap: 20px;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.h-100 {
+    height: 100%;
+}
+
+/* Common Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray);
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #ddd;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: var(--black);
+}
+
+.empty-state p {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Common Progress Bar */
+.progress-container {
+    margin: 15px 0;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Common Package Card Styles */
+.package-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 18px 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+}
+
+.package-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.package-card.selected {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+}
+
+.package-badge {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: var(--primary);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Common Transaction Styles */
+.transaction-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+.transaction-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Common Filter Styles */
+.filters {
+    background: var(--white);
+    margin: 20px;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: var(--light-gray);
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    color: var(--gray);
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}

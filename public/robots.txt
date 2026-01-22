@@ -1,0 +1,74 @@
+# robots.txt for SurveyRewards
+# Generated: 2026-01-19
+# Contact: support@surveyrewards-ji2f.onrender.com/
+
+User-agent: *
+Allow: /
+
+# Disallow admin and sensitive areas
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /control-panel/
+Disallow: /cpanel/
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Disallow: /wp-includes/
+Disallow: /search/
+Disallow: /private/
+Disallow: /secure/
+Disallow: /test/
+Disallow: /staging/
+Disallow: /development/
+Disallow: /backup/
+
+# Allow specific user agents (optional)
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+
+User-agent: Yandex
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: dotbot
+Disallow: /
+
+User-agent: rogerbot
+Disallow: /
+
+# Sitemaps
+Sitemap: https://surveyrewards-ji2f.onrender.com//sitemap.xml
+Sitemap: https://surveyrewards-ji2f.onrender.com//sitemap-index.xml
+
+# Crawl settings
+Crawl-delay: 1
+Request-rate: 1/10
+
+# Clean param for tracking URLs (if you use query parameters)
+Clean-param: ref /surveys/
+Clean-param: utm_source /
+Clean-param: utm_medium /
+Clean-param: utm_campaign /
