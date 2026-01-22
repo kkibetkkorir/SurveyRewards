@@ -87,7 +87,11 @@ function Admin({setLoading}) {
         console.log('✅ User is admin, setting state');
         setIsAdmin(true);
         setAuthChecked(true);
-        if (setLoading) setLoading(false);
+        
+        // Only call setLoading if it's a function
+        if (typeof setLoading === 'function') {
+          setLoading(false);
+        }
       } catch (error) {
         console.error('❌ Admin check error:', error);
         Swal.fire('Error', 'Failed to verify admin access', 'error');
@@ -96,7 +100,7 @@ function Admin({setLoading}) {
     };
     
     checkAdmin();
-  }, [navigate]);
+  }, [navigate, setLoading]);
   
   // Load users and withdrawals when tab changes
   useEffect(() => {
