@@ -49,7 +49,7 @@ function Home({setLoading}) {
         
         // Transform Firebase packages to match expected format
         const transformedPackages = fetchedPackages.map(pkg => {
-          const isPopular = pkg.price >= 150 && pkg.price < 500;
+          const isPopular = pkg.price >= 150 && pkg.price < 200;
           const isBestValue = pkg.price >= 200;
           
           return {
