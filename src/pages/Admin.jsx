@@ -10,13 +10,13 @@ import {
   updateUserStatus,
   updateWithdrawalStatus 
 } from '../firebase';
- 
 
 function Admin({setLoading}) {
   const navigate = useNavigate();
   
   const [activeTab, setActiveTab] = useState('addPackage');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   
   // Add Package State
   const [packageData, setPackageData] = useState({
@@ -53,33 +53,44 @@ function Admin({setLoading}) {
   useEffect(() => {
     const checkAdmin = async () => {
       try {
+        console.log('🔍 Starting admin check...');
+        
         const user = await getCurrentUser();
+        console.log('✅ getCurrentUser returned:', user);
+        
         if (!user) {
+          console.log('❌ No user found, redirecting to login');
           navigate('/login');
           return;
         }
         
-        // Check if user is admin (you can implement your own admin check logic)
-        // For now, checking if email contains 'admin' or user has admin role
-        //const isAdminUser = user.email?.includes('admin') || user.isAdmin === true;
-        //const isAdminUser = user.isAdmin === true; // Direct check of isAdmin field
-
-        // Debug: Check the isAdmin value
-      console.log('isAdmin field:', user.isAdmin, 'Type:', typeof user.isAdmin);
-      
-      // Check if user is admin
-      const isAdminUser = user.isAdmin === true;
+        // Debug: Check all user fields
+        console.log('📋 Full user data:', user);
+        console.log('🔑 isAdmin field value:', user.isAdmin);
+        console.log('🔑 isAdmin type:', typeof user.isAdmin);
+        
+        // Check if user is admin - handle both boolean true and string 'true'
+        const isAdminUser = 
+          user.isAdmin === true || 
+          user.isAdmin === 'true' || 
+          user.email?.includes('admin');
+        
+        console.log('✅ isAdminUser check result:', isAdminUser);
         
         if (!isAdminUser) {
+          console.log('❌ User is not admin, redirecting to home');
           Swal.fire('Access Denied', 'You do not have admin privileges', 'error');
           navigate('/');
           return;
         }
         
+        console.log('✅ User is admin, setting state');
         setIsAdmin(true);
-        setLoading(false);
+        setAuthChecked(true);
+        if (setLoading) setLoading(false);
       } catch (error) {
-        console.error('Admin check error:', error);
+        console.error('❌ Admin check error:', error);
+        Swal.fire('Error', 'Failed to verify admin access', 'error');
         navigate('/login');
       }
     };
@@ -360,10 +371,87 @@ function Admin({setLoading}) {
     });
   };
   
-   
+  // Don't return null until we've checked auth
+  if (!authChecked) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: '#f5f5f5'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '40px',
+          background: 'white',
+          borderRadius: '10px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{
+            fontSize: '48px',
+            color: '#667eea',
+            marginBottom: '20px'
+          }}>
+            <i className="fas fa-spinner fa-spin" />
+          </div>
+          <h3 style={{ marginBottom: '10px', color: '#333' }}>
+            Verifying Admin Access...
+          </h3>
+          <p style={{ color: '#666', fontSize: '14px' }}>
+            Please wait while we check your permissions
+          </p>
+        </div>
+      </div>
+    );
+  }
   
   if (!isAdmin) {
-    return null;
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: '#f5f5f5'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          padding: '40px',
+          background: 'white',
+          borderRadius: '10px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{
+            fontSize: '48px',
+            color: '#dc3545',
+            marginBottom: '20px'
+          }}>
+            <i className="fas fa-ban" />
+          </div>
+          <h3 style={{ marginBottom: '10px', color: '#333' }}>
+            Access Denied
+          </h3>
+          <p style={{ color: '#666', marginBottom: '20px' }}>
+            You do not have admin privileges to access this page.
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            style={{
+              background: '#667eea',
+              color: 'white',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            <i className="fas fa-arrow-left" /> Back to Home
+          </button>
+        </div>
+      </div>
+    );
   }
   
   return (
