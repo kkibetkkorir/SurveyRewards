@@ -49,8 +49,8 @@ function Home({setLoading}) {
         
         // Transform Firebase packages to match expected format
         const transformedPackages = fetchedPackages.map(pkg => {
-          const isPopular = pkg.price >= 300 && pkg.price < 500;
-          const isBestValue = pkg.price >= 500;
+          const isPopular = pkg.price >= 150 && pkg.price < 500;
+          const isBestValue = pkg.price >= 200;
           
           return {
             id: pkg.id,
@@ -61,7 +61,7 @@ function Home({setLoading}) {
             features: [
               `${pkg.surveys} Premium Surveys`,
               `${pkg.duration} Days Access`,
-              `Earn up to KSh ${pkg.price * 4}`,
+              `Earn up to KSh ${pkg.price * 6}`,
               'Premium Support',
               'Daily Survey Refresh'
             ],
@@ -83,7 +83,7 @@ function Home({setLoading}) {
           transformedPackages[0].features = [
             `${transformedPackages[0].surveys} Premium Surveys`,
             '7 Days Access',
-            `Earn up to KSh ${transformedPackages[0].price * 5}`,
+            `Earn up to KSh ${transformedPackages[0].price * 7}`,
             'Basic Support',
             'Daily Survey Refresh'
           ];
@@ -91,7 +91,7 @@ function Home({setLoading}) {
           transformedPackages[1].features = [
             `${transformedPackages[1].surveys} Premium Surveys`,
             '30 Days Access',
-            `Earn up to KSh ${transformedPackages[1].price * 4}`,
+            `Earn up to KSh ${transformedPackages[1].price * 6}`,
             'Priority Support',
             'Early Survey Access',
             'Higher Paying Surveys'
@@ -100,7 +100,7 @@ function Home({setLoading}) {
           transformedPackages[2].features = [
             `${transformedPackages[2].surveys} Premium Surveys`,
             '30 Days Access',
-            `Earn up to KSh ${transformedPackages[2].price * 4}`,
+            `Earn up to KSh ${transformedPackages[2].price * 7}`,
             'VIP Support',
             'First Access to Surveys',
             'Bonus Earnings',
