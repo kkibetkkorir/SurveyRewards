@@ -50,7 +50,7 @@ function Admin({setLoading}) {
   const [withdrawalStatus, setWithdrawalStatus] = useState('all');
   
   // Check if user is admin
-  /*useEffect(() => {
+  useEffect(() => {
     const checkAdmin = async () => {
       try {
         const user = await getCurrentUser();
@@ -61,7 +61,8 @@ function Admin({setLoading}) {
         
         // Check if user is admin (you can implement your own admin check logic)
         // For now, checking if email contains 'admin' or user has admin role
-        const isAdminUser = user.email?.includes('admin') || user.isAdmin === true;
+        //const isAdminUser = user.email?.includes('admin') || user.isAdmin === true;
+        const isAdminUser = user.isAdmin === true; // Direct check of isAdmin field
         
         if (!isAdminUser) {
           Swal.fire('Access Denied', 'You do not have admin privileges', 'error');
@@ -78,7 +79,7 @@ function Admin({setLoading}) {
     };
     
     checkAdmin();
-  }, [navigate]);*/
+  }, [navigate]);
   
   // Load users and withdrawals when tab changes
   useEffect(() => {
