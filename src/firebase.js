@@ -213,7 +213,7 @@ export const logoutUser = async () => {
  * Get current authenticated user
  * @returns {Promise<Object|null>} - Current user or null
  */
-export const getCurrentUser = () => {
+/*export const getCurrentUser = () => {
   return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -228,6 +228,54 @@ export const getCurrentUser = () => {
       }
       unsubscribe();
     });
+  });
+};*/
+
+
+export const getCurrentUser = async () => {
+  return new Promise((resolve, reject) => {
+    // First check if there's a current user in auth
+    const currentUser = auth.currentUser;
+    
+    if (!currentUser) {
+      // If no current user, check auth state changes
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        async (user) => {
+          if (user) {
+            try {
+              const userDoc = await getDoc(doc(db, USERS_COLLECTION, user.uid));
+              if (userDoc.exists()) {
+                resolve(userDoc.data());
+              } else {
+                resolve(null);
+              }
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            resolve(null);
+          }
+          unsubscribe();
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+      
+      // Set a timeout in case the auth state never changes
+      setTimeout(() => {
+        unsubscribe();
+        resolve(null);
+      }, 5000);
+    } else {
+      // If there's a current user, get their data
+      getDoc(doc(db, USERS_COLLECTION, currentUser.uid))
+        .then((userDoc) => {
+          resolve(userDoc.exists() ? userDoc.data() : null);
+        })
+        .catch(reject);
+    }
   });
 };
 
