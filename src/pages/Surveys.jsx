@@ -13,19 +13,17 @@ function Surveys({setLoading}) {
   const [completedSurveys, setCompletedSurveys] = useState(0);
   const [isGuest, setIsGuest] = useState(false);
   const [completedSurveyIds, setCompletedSurveyIds] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Fetch surveys and user data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        console.log('Fetching data...');
+        console.log('Starting data fetch...');
         
         // Get current user
         const user = await getCurrentUser();
-        console.log('User fetched:', user);
-        
-        let userCompletedIds = [];
+        console.log('User from getCurrentUser:', user);
         
         if (user) {
           // User is logged in
@@ -45,23 +43,10 @@ function Surveys({setLoading}) {
           localStorage.setItem('survey_user', JSON.stringify(transformedUser));
           setIsGuest(false);
           
-          // Get user's completed survey IDs from Firebase
-          try {
-            // Import Firebase functions inside try block
-            const { getFirestore, collection, query, where, getDocs } = await import('firebase/firestore');
-            const db = getFirestore();
-            const completionsQuery = query(
-              collection(db, 'surveyCompletions'),
-              where('userId', '==', user.uid)
-            );
-            
-            const snapshot = await getDocs(completionsQuery);
-            userCompletedIds = snapshot.docs.map(doc => doc.data().surveyId);
-            console.log('User completed survey IDs:', userCompletedIds);
-          } catch (error) {
-            console.error('Error fetching completed surveys:', error);
+          // Get completed survey IDs from user data if available
+          if (user.completedSurveys) {
+            setCompletedSurveyIds(user.completedSurveys);
           }
-          
         } else {
           // User is not logged in - guest mode
           const guestUser = {
@@ -81,46 +66,53 @@ function Surveys({setLoading}) {
           setIsGuest(true);
         }
 
-        setCompletedSurveyIds(userCompletedIds);
-        
-        // Fetch ALL surveys (not filtered by user)
+        // Fetch ALL surveys - pass null or empty to get all surveys
         console.log('Fetching ALL surveys...');
-        const allSurveys = await getAvailableSurveys();
-        console.log('All surveys fetched:', allSurveys);
+        const allSurveys = await getAvailableSurveys(null);
+        console.log('Raw surveys data:', allSurveys);
         
-        // Transform surveys
-        const transformedSurveys = allSurveys.map(survey => {
-          const isCompleted = userCompletedIds.includes(survey.id);
-          return {
-            id: survey.id,
-            title: survey.title || 'Survey',
-            description: survey.description || 'Share your opinion',
-            reward: survey.reward || 50,
-            duration: `${survey.duration || Math.floor(Math.random() * 10) + 5} mins`,
-            category: survey.category || 'General',
-            status: 'available',
-            completed: isCompleted
-          };
-        });
-        
-        console.log('Transformed surveys:', transformedSurveys);
-        setSurveys(transformedSurveys);
-        
-        // Update stats
-        updateSurveyStats(transformedSurveys);
+        if (allSurveys && allSurveys.length > 0) {
+          // Transform surveys
+          const transformedSurveys = allSurveys.map(survey => {
+            // Check if survey has required properties
+            const surveyData = survey.data ? survey.data() : survey;
+            const surveyId = survey.id || surveyData.id;
+            
+            return {
+              id: surveyId,
+              title: surveyData.title || 'Survey',
+              description: surveyData.description || 'Share your opinion',
+              reward: surveyData.reward || 50,
+              duration: `${surveyData.duration || Math.floor(Math.random() * 10) + 5} mins`,
+              category: surveyData.category || 'General',
+              status: 'available',
+              completed: false // Initially set to false for all
+            };
+          });
+          
+          console.log('Transformed surveys:', transformedSurveys);
+          setSurveys(transformedSurveys);
+          
+          // Update stats
+          updateSurveyStats(transformedSurveys);
+        } else {
+          console.log('No surveys found or empty array returned');
+          setSurveys([]);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
-        // Don't navigate to login on error for guests
-        if (userData?.loggedIn) {
-          navigate('/login');
-        }
+        // Set empty surveys on error
+        setSurveys([]);
       } finally {
-        setLoading(false);
+        setIsLoading(false);
+        if (setLoading) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [navigate]);
+  }, [navigate, setLoading]);
 
   // Update survey statistics
   const updateSurveyStats = (surveysList) => {
@@ -256,9 +248,6 @@ function Surveys({setLoading}) {
         setUserData(updatedUserData);
         localStorage.setItem('survey_user', JSON.stringify(updatedUserData));
         
-        // Add to completed survey IDs
-        setCompletedSurveyIds(prev => [...prev, survey.id]);
-        
         // Update surveys list
         const updatedSurveys = surveys.map(s => 
           s.id === survey.id ? { ...s, completed: true } : s
@@ -342,14 +331,41 @@ function Surveys({setLoading}) {
     return filter === filterName ? 'filter-btn active' : 'filter-btn';
   };
 
-  // If loading, show nothing
-  if (!userData && !isGuest) {
-    return null;
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '50vh',
+        flexDirection: 'column',
+        gap: '20px'
+      }}>
+        <div className="spinner"></div>
+        <p>Loading surveys...</p>
+      </div>
+    );
   }
 
   return (
     <div>
       <style>{`
+        /* Spinner styles */
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 4px solid #f3f3f3;
+          border-top: 4px solid var(--primary);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
         .survey-stats {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -611,7 +627,7 @@ function Surveys({setLoading}) {
           <div className="no-surveys">
             <i className="fas fa-poll" />
             <h3>No Surveys Available</h3>
-            <p>No surveys match your current filter</p>
+            <p>Check back later for new surveys or try a different filter</p>
           </div>
         ) : (
           filteredSurveys().map((survey) => (
