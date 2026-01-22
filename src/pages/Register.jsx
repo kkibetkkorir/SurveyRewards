@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../firebase';
 import Swal from 'sweetalert2';
 
-function Register({isLoading, setLoading}) {
+function Register() {
   const navigate = useNavigate();
   
   // State management
@@ -15,6 +15,7 @@ function Register({isLoading, setLoading}) {
   });
   
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Component-level loading state
 
   // Format phone number as user types
   const handlePhoneChange = (e) => {
@@ -79,7 +80,7 @@ function Register({isLoading, setLoading}) {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true); // Use component-level loading state
 
     try {
       const result = await registerUser(phoneDigits, password, fullName.trim());
@@ -101,7 +102,7 @@ function Register({isLoading, setLoading}) {
       console.error('Registration error:', error);
       Swal.fire('Error', 'Registration failed. Please try again.', 'error');
     } finally {
-      setLoading(false);
+      setIsLoading(false); // Use component-level loading state
     }
   };
 
