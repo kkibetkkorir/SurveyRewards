@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { getCurrentUser, getAvailableSurveys, completeSurvey } from '../firebase';
 import Swal from 'sweetalert2';
+ 
 
 function Surveys({setLoading}) {
   const navigate = useNavigate();
@@ -12,117 +12,65 @@ function Surveys({setLoading}) {
   const [filter, setFilter] = useState('all');
   const [availableSurveys, setAvailableSurveys] = useState(0);
   const [completedSurveys, setCompletedSurveys] = useState(0);
-  const [isGuest, setIsGuest] = useState(false);
-  const [completedSurveyIds, setCompletedSurveyIds] = useState([]);
+   
 
-  // Fetch surveys and user data
+  // Check if user is logged in and fetch data
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUserAndSurveys = async () => {
       try {
-        setLoading(true);
-        console.log('Fetching data...');
-        
-        // Get current user
         const user = await getCurrentUser();
-        console.log('User fetched:', user);
-        
-        if (user) {
-          // User is logged in
-          const transformedUser = {
-            ...user,
-            name: user.fullName || user.displayName || '',
-            phone: user.phone || '',
-            balance: user.balance || 0,
-            package: user.currentPackage || null,
-            availableSurveys: user.availableSurveys || 0,
-            surveysCompleted: user.surveysCompleted || 0,
-            totalEarnings: user.totalEarnings || 0,
-            loggedIn: true
-          };
-
-          setUserData(transformedUser);
-          localStorage.setItem('survey_user', JSON.stringify(transformedUser));
-          setIsGuest(false);
-          
-          // Get user's completed survey IDs separately
-          const userCompletedSurveyIds = await getUserCompletedSurveyIds(user.uid);
-          setCompletedSurveyIds(userCompletedSurveyIds);
-          console.log('User completed survey IDs:', userCompletedSurveyIds);
-        } else {
-          // User is not logged in - guest mode
-          const guestUser = {
-            uid: 'guest',
-            name: 'Guest',
-            phone: '',
-            balance: 0,
-            package: null,
-            availableSurveys: 0,
-            surveysCompleted: 0,
-            totalEarnings: 0,
-            loggedIn: false
-          };
-          
-          setUserData(guestUser);
-          localStorage.removeItem('survey_user');
-          setIsGuest(true);
-          setCompletedSurveyIds([]);
+        if (!user) {
+          navigate('/login');
+          return;
         }
 
-        // Fetch ALL surveys (not filtered by user)
-        console.log('Fetching ALL surveys...');
-        const allSurveys = await getAvailableSurveys();
-        console.log('All surveys fetched:', allSurveys);
+        // Transform Firebase user data to match expected format
+        const transformedUser = {
+          ...user,
+          name: user.fullName || user.displayName || '',
+          phone: user.phone || '',
+          balance: user.balance || 0,
+          package: user.currentPackage || null,
+          availableSurveys: user.availableSurveys || 0,
+          surveysCompleted: user.surveysCompleted || 0,
+          totalEarnings: user.totalEarnings || 0,
+          loggedIn: true
+        };
+
+        setUserData(transformedUser);
         
-        // Transform surveys
-        const transformedSurveys = allSurveys.map(survey => {
-          const isCompleted = completedSurveyIds.includes(survey.id);
-          return {
-            id: survey.id,
-            title: survey.title || 'Survey',
-            description: survey.description || 'Share your opinion',
-            reward: survey.reward || 50,
-            duration: `${survey.duration || Math.floor(Math.random() * 10) + 5} mins`,
-            category: survey.category || 'General',
-            status: 'available',
-            completed: isCompleted
-          };
-        });
+        // Store in localStorage for compatibility
+        localStorage.setItem('survey_user', JSON.stringify(transformedUser));
         
-        console.log('Transformed surveys:', transformedSurveys);
+        // Fetch surveys from Firebase
+        const fetchedSurveys = await getAvailableSurveys(user.uid);
+        
+        // Transform Firebase surveys to match expected format
+        const transformedSurveys = fetchedSurveys.map(survey => ({
+          id: survey.id,
+          title: survey.title || 'Survey',
+          description: survey.description || 'Share your opinion',
+          reward: survey.reward || 50,
+          duration: `${Math.floor(Math.random() * 10) + 5} mins`,
+          category: survey.category || 'General',
+          status: 'available',
+          completed: survey.completed || false
+        }));
+        
         setSurveys(transformedSurveys);
         
         // Update stats
         updateSurveyStats(transformedSurveys);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        // Don't navigate to login on error for guests
-        if (userData?.loggedIn) {
-          navigate('/login');
-        }
+        console.error('Error fetching surveys:', error);
+        navigate('/login');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchUserAndSurveys();
   }, [navigate]);
-
-  // Helper function to get user's completed survey IDs
-  const getUserCompletedSurveyIds = async (userId) => {
-    try {
-      const db = getFirestore();
-      const completionsQuery = query(
-        collection(db, 'surveyCompletions'),
-        where('userId', '==', userId)
-      );
-      
-      const snapshot = await getDocs(completionsQuery);
-      return snapshot.docs.map(doc => doc.data().surveyId);
-    } catch (error) {
-      console.error('Error fetching completed surveys:', error);
-      return [];
-    }
-  };
 
   // Update survey statistics
   const updateSurveyStats = (surveysList) => {
@@ -135,31 +83,7 @@ function Surveys({setLoading}) {
 
   // Handle survey click
   const handleSurveyClick = async (survey) => {
-    // For guest users, prompt them to login/signup
-    if (isGuest) {
-      const { value } = await Swal.fire({
-        title: 'Login Required',
-        html: `
-          <div style="text-align: center;">
-            <i class="fas fa-user-lock" style="font-size: 48px; color: var(--primary);"></i>
-            <h3 style="margin: 15px 0;">Login to Start Survey</h3>
-            <p>You need to login or create an account to complete surveys and earn rewards</p>
-          </div>
-        `,
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Login / Signup',
-        cancelButtonText: 'Continue as Guest'
-      });
-
-      if (value) {
-        navigate('/login');
-      }
-      return;
-    }
-
-    // Original logic for logged-in users remains the same
-    if (!userData?.uid || userData.uid === 'guest') {
+    if (!userData?.uid) {
       Swal.fire('Error', 'User not found. Please login again.', 'error');
       return;
     }
@@ -258,9 +182,6 @@ function Surveys({setLoading}) {
         setUserData(updatedUserData);
         localStorage.setItem('survey_user', JSON.stringify(updatedUserData));
         
-        // Add to completed survey IDs
-        setCompletedSurveyIds(prev => [...prev, survey.id]);
-        
         // Update surveys list
         const updatedSurveys = surveys.map(s => 
           s.id === survey.id ? { ...s, completed: true } : s
@@ -322,14 +243,14 @@ function Surveys({setLoading}) {
     return filter === filterName ? 'filter-btn active' : 'filter-btn';
   };
 
-  // Don't return null if no userData - allow guests
-  if (!userData && !isGuest) {
+  if (!userData) {
     return null;
   }
 
   return (
     <div>
       <style>{`
+        /* Survey-specific styles */
         .survey-stats {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -516,13 +437,13 @@ function Surveys({setLoading}) {
           <div className="stat-label">Completed</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value">{userData?.availableSurveys || 0}</div>
+          <div className="stat-value">{userData.availableSurveys || 0}</div>
           <div className="stat-label">Package Left</div>
         </div>
       </div>
 
-      {/* Package Warning - only show for logged-in users without package */}
-      {!isGuest && (!userData?.package || userData?.availableSurveys <= 0) && (
+      {/* Package Warning if no active package */}
+      {(!userData.package || userData.availableSurveys <= 0) && (
         <div className="package-warning">
           <h4><i className="fas fa-crown" /> Purchase a Package</h4>
           <p>You need an active survey package to access premium surveys</p>
@@ -532,21 +453,6 @@ function Surveys({setLoading}) {
             style={{ marginTop: 10 }}
           >
             <i className="fas fa-shopping-cart" /> View Packages
-          </button>
-        </div>
-      )}
-
-      {/* Guest Message */}
-      {isGuest && (
-        <div className="package-warning" style={{ background: 'linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%)', borderColor: '#00bcd4' }}>
-          <h4><i className="fas fa-user" /> Continue as Guest</h4>
-          <p>Login or create an account to complete surveys and earn rewards</p>
-          <button 
-            className="btn btn-primary" 
-            onClick={() => navigate('/login')}
-            style={{ marginTop: 10 }}
-          >
-            <i className="fas fa-sign-in-alt" /> Login / Signup
           </button>
         </div>
       )}
@@ -585,18 +491,6 @@ function Surveys({setLoading}) {
         </button>
       </div>
 
-      {/* Debug info - only in development */}
-      {process.env.NODE_ENV === 'development' && (
-        <div style={{ padding: '10px 20px', fontSize: '12px', color: '#666', background: '#f5f5f5', margin: '10px 20px', borderRadius: '8px' }}>
-          <p><strong>Debug Info:</strong></p>
-          <p>User logged in: {!isGuest ? 'Yes' : 'No (Guest)'}</p>
-          <p>Total surveys: {surveys.length}</p>
-          <p>Available surveys: {availableSurveys}</p>
-          <p>Completed surveys: {completedSurveys}</p>
-          <p>User package left: {userData?.availableSurveys || 0}</p>
-        </div>
-      )}
-
       {/* Survey List */}
       <div className="survey-list">
         {filteredSurveys().length === 0 ? (
@@ -604,12 +498,6 @@ function Surveys({setLoading}) {
             <i className="fas fa-poll" />
             <h3>No Surveys Available</h3>
             <p>No surveys match your current filter</p>
-            {process.env.NODE_ENV === 'development' && (
-              <div style={{ marginTop: '10px', fontSize: '12px', color: '#999' }}>
-                <p>Total surveys in database: {surveys.length}</p>
-                <p>Filter applied: {filter}</p>
-              </div>
-            )}
           </div>
         ) : (
           filteredSurveys().map((survey) => (
@@ -640,7 +528,7 @@ function Surveys({setLoading}) {
                 </div>
                 
                 <div className={`survey-status ${survey.completed ? 'status-completed' : 'status-available'}`}>
-                  {isGuest ? 'Login Required' : (survey.completed ? 'Completed' : 'Available')}
+                  {survey.completed ? 'Completed' : 'Available'}
                 </div>
               </div>
             </div>
