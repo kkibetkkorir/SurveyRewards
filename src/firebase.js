@@ -597,8 +597,8 @@ export const getAvailableSurveys = async (userId = null) => {
   try {
     const surveysQuery = query(
       collection(db, SURVEYS_COLLECTION),
-      where("isActive", "==", true),
-      orderBy("reward", "desc"),
+      //where("isActive", "==", true),
+      //orderBy("reward", "desc"),
     );
 
     const snapshot = await getDocs(surveysQuery);

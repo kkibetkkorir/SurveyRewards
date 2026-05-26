@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Packages | SurveyEarn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-light: #10b981;
+            --secondary: #065f46;
+            --white: #ffffff;
+            --black: #1a1a1a;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--light-gray);
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 60px 20px 20px;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .balance-card {
+            background: var(--white);
+            border-radius: 15px;
+            margin: 20px;
+            padding: 18px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .balance-label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .balance-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .current-package {
+            background: var(--white);
+            border-radius: 15px;
+            margin: 0 20px 20px;
+            padding: 18px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .package-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--black);
+        }
+
+        .package-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .package-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 18px 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+        }
+
+        .package-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .package-card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+        }
+
+        .package-card.featured {
+            border-color: #ffd166;
+        }
+
+        .package-badge {
+            position: absolute;
+            top: -8px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .package-badge.featured {
+            background: #ffd166;
+            color: #333;
+        }
+
+        .package-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--black);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .package-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .package-price span {
+            font-size: 12px;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        .package-details {
+            list-style: none;
+            margin: 12px 0;
+            padding: 0;
+        }
+
+        .package-details li {
+            padding: 4px 0;
+            font-size: 11px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .package-details li i {
+            color: var(--primary);
+            font-size: 10px;
+        }
+
+        .package-action {
+            width: 100%;
+            padding: 10px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .package-action:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .package-action.active {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .package-action.active:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .compare-section {
+            background: var(--white);
+            border-radius: 15px;
+            margin: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .compare-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 12px;
+            color: var(--gray);
+            font-weight: 500;
+            border-bottom: 1px solid #eee;
+        }
+
+        .compare-table td {
+            padding: 12px 8px;
+            font-size: 13px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .compare-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .feature-indicator {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .info-note {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px;
+            border-left: 4px solid var(--primary);
+            font-size: 13px;
+            color: #333;
+        }
+
+        .info-note h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .info-note ul {
+            padding-left: 20px;
+        }
+
+        .info-note li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: var(--black);
+            font-size: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .payment-summary {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .payment-summary h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .payment-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .payment-details {
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .confirm-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .package-list {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 50px 15px 15px;
+            }
+
+            .balance-card,
+            .current-package,
+            .compare-section,
+            .info-note {
+                margin: 15px;
+                padding: 15px;
+            }
+
+            .package-list {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+            }
+
+            .package-card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="profile.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1>Survey Packages</h1>
+            <div style="width: 40px;"></div>
+        </div>
+    </div>
+
+    <div class="balance-card">
+        <div class="balance-label">Available Balance</div>
+        <div class="balance-amount" id="currentBalance">KSh 0.00</div>
+    </div>
+
+    <div class="current-package" id="currentPackageSection" style="display: none;">
+        <div class="package-title">
+            <i class="fas fa-crown" style="color: #ffd166; margin-right: 8px;"></i>
+            Active Package
+        </div>
+        <div id="currentPackageInfo">
+            <!-- Active package info will be loaded here -->
+        </div>
+    </div>
+
+    <div class="package-title" style="text-align: center; margin: 20px 20px 0;">
+        Choose Your Package
+    </div>
+
+    <div class="package-list" id="packagesContainer">
+        <!-- Packages will be loaded here -->
+    </div>
+
+    <div class="compare-section">
+        <h3 style="font-size: 16px; margin-bottom: 15px; color: var(--black);">Package Comparison</h3>
+        <table class="compare-table">
+            <thead>
+                <tr>
+                    <th>Features</th>
+                    <th>Basic</th>
+                    <th>Pro</th>
+                    <th>Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Surveys</td>
+                    <td>10</td>
+                    <td>35</td>
+                    <td>70</td>
+                </tr>
+                <tr>
+                    <td>Duration</td>
+                    <td>7 days</td>
+                    <td>30 days</td>
+                    <td>30 days</td>
+                </tr>
+                <tr>
+                    <td>Earnings Potential</td>
+                    <td>KSh 500</td>
+                    <td>KSh 2,000</td>
+                    <td>KSh 4,000</td>
+                </tr>
+                <tr>
+                    <td>Support</td>
+                    <td>Basic</td>
+                    <td>Priority</td>
+                    <td>VIP</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="info-note">
+        <h4><i class="fas fa-info-circle"></i> Package Benefits</h4>
+        <ul>
+            <li>Unlock premium, high-paying surveys</li>
+            <li>Complete surveys at your own pace</li>
+            <li>Earnings are paid directly to your account</li>
+            <li>Unused surveys expire after package duration</li>
+        </ul>
+    </div>
+
+    <!-- Purchase Confirmation Modal -->
+    <div class="modal-overlay" id="purchaseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Purchase</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+
+            <div id="purchaseSummary">
+                <!-- Purchase summary will be loaded here -->
+            </div>
+
+            <button class="confirm-btn" onclick="processPurchase()">
+                <i class="fas fa-lock"></i> Confirm Purchase
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Load user data
+        const userData = JSON.parse(localStorage.getItem('survey_user') || '{}');
+
+        // Initialize if not exists
+        if (!userData.loggedIn) {
+            userData.loggedIn = true;
+            userData.name = "John Doe";
+            userData.phone = "+254712345678";
+            userData.balance = 0;
+            userData.package = null;
+            userData.availableSurveys = 0;
+            userData.surveysCompleted = 0;
+            userData.totalEarnings = 0;
+            userData.packageExpiry = null;
+            localStorage.setItem('survey_user', JSON.stringify(userData));
+        }
+
+        // Package data
+        const packages = [
+            {
+                id: 'basic',
+                name: 'Basic',
+                price: 100,
+                surveys: 10,
+                days: 7,
+                features: ['10 Surveys', '7 Days', 'Basic Support'],
+                badge: null,
+                featured: false
+            },
+            {
+                id: 'pro',
+                name: 'Pro',
+                price: 300,
+                surveys: 35,
+                days: 30,
+                features: ['35 Surveys', '30 Days', 'Priority Support', 'Early Access'],
+                badge: 'POPULAR',
+                featured: true
+            },
+            {
+                id: 'premium',
+                name: 'Premium',
+                price: 500,
+                surveys: 70,
+                days: 30,
+                features: ['70 Surveys', 'VIP Support', 'Bonus Earnings', 'All Features'],
+                badge: 'BEST VALUE',
+                featured: false
+            }
+        ];
+
+        let selectedPackage = null;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            updateUserDisplay();
+            loadCurrentPackage();
+            loadPackages();
+            setupEventListeners();
+        });
+
+        // Update user display
+        function updateUserDisplay() {
+            document.getElementById('currentBalance').textContent =
+                `KSh ${(userData.balance || 0).toFixed(2)}`;
+        }
+
+        // Load current package info
+        function loadCurrentPackage() {
+            const currentPackageSection = document.getElementById('currentPackageSection');
+            const currentPackageInfo = document.getElementById('currentPackageInfo');
+
+            if (userData.package) {
+                currentPackageSection.style.display = 'block';
+                const pkg = packages.find(p => p.id === userData.package);
+
+                let daysRemaining = 0;
+                if (userData.packageExpiry) {
+                    const expiry = new Date(userData.packageExpiry);
+                    const now = new Date();
+                    daysRemaining = Math.max(0, Math.ceil((expiry - now) / (1000 * 60 * 60 * 24)));
+                }
+
+                currentPackageInfo.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 5px;">
+                            ${pkg ? pkg.name : 'Custom'} Package
+                        </div>
+                        <div style="font-size: 14px; color: var(--gray); margin-bottom: 10px;">
+                            ${userData.availableSurveys || 0} surveys remaining • ${daysRemaining} days left
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 16px; font-weight: 600; color: var(--primary);">
+                                    ${userData.surveysCompleted || 0}
+                                </div>
+                                <div style="font-size: 11px; color: var(--gray);">Completed</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 16px; font-weight: 600; color: var(--primary);">
+                                    KSh ${userData.totalEarnings || 0}
+                                </div>
+                                <div style="font-size: 11px; color: var(--gray);">Earned</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                currentPackageSection.style.display = 'none';
+            }
+        }
+
+        // Load packages
+        function loadPackages() {
+            const container = document.getElementById('packagesContainer');
+            container.innerHTML = '';
+
+            packages.forEach(pkg => {
+                const card = document.createElement('div');
+                card.className = `package-card ${pkg.featured ? 'featured' : ''} ${userData.package === pkg.id ? 'selected' : ''}`;
+                card.onclick = () => selectPackage(pkg.id);
+
+                let badgeHTML = '';
+                if (pkg.badge) {
+                    badgeHTML = `<div class="package-badge ${pkg.featured ? 'featured' : ''}">${pkg.badge}</div>`;
+                }
+
+                let buttonText = userData.package === pkg.id ? 'Current Package' : 'Select Package';
+                let buttonClass = userData.package === pkg.id ? 'package-action active' : 'package-action';
+
+                card.innerHTML = `
+                    ${badgeHTML}
+                    <div class="package-name">${pkg.name}</div>
+                    <div class="package-price">KSh ${pkg.price}</div>
+                    <ul class="package-details">
+                        ${pkg.features.map(feature =>
+                    `<li><i class="fas fa-check"></i> ${feature}</li>`
+                ).join('')}
+                    </ul>
+                    <button class="${buttonClass}" onclick="selectPackage('${pkg.id}'); event.stopPropagation();">
+                        <i class="fas ${userData.package === pkg.id ? 'fa-check-circle' : 'fa-shopping-cart'}"></i>
+                        ${buttonText}
+                    </button>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Select package
+        function selectPackage(packageId) {
+            if (userData.package === packageId) {
+                return; // Already active
+            }
+
+            selectedPackage = packages.find(p => p.id === packageId);
+
+            // Remove selected class from all cards
+            document.querySelectorAll('.package-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selected class to clicked card
+            event.target.closest('.package-card').classList.add('selected');
+
+            // Show purchase modal
+            showPurchaseModal();
+        }
+
+        // Show purchase modal
+        function showPurchaseModal() {
+            if (!selectedPackage) return;
+
+            const modal = document.getElementById('purchaseModal');
+            const summary = document.getElementById('purchaseSummary');
+
+            summary.innerHTML = `
+                <div class="payment-summary">
+                    <h4>${selectedPackage.name} Package</h4>
+                    <div class="payment-amount">KSh ${selectedPackage.price}</div>
+                    <div class="payment-details">
+                        <div>${selectedPackage.surveys} Premium Surveys</div>
+                        <div>${selectedPackage.days} Days Access</div>
+                        <div>Estimated Earnings: KSh ${selectedPackage.price * 4}</div>
+                    </div>
+                </div>
+                
+                <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: var(--gray);">Your Balance:</span>
+                        <span style="font-weight: 600;">KSh ${(userData.balance || 0).toFixed(2)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--gray);">Required:</span>
+                        <span style="font-weight: 600; color: ${userData.balance >= selectedPackage.price ? 'var(--primary)' : '#dc3545'}">
+                            KSh ${selectedPackage.price}
+                        </span>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('purchaseModal').style.display = 'none';
+        }
+
+        // Process purchase
+        function processPurchase() {
+            if (!selectedPackage) return;
+
+            if (userData.balance < selectedPackage.price) {
+                Swal.fire({
+                    title: 'Insufficient Balance',
+                    html: `
+                        <div style="text-align: center;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: #ffc107;"></i>
+                            <h3 style="margin: 15px 0;">Balance: KSh ${(userData.balance || 0).toFixed(2)}</h3>
+                            <p>You need KSh ${selectedPackage.price} to purchase this package.</p>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Add Funds',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'deposit.html';
+                    }
+                });
+                return;
+            }
+
+            // Show processing
+            Swal.fire({
+                title: 'Processing...',
+                text: 'Purchasing package',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            // Simulate purchase processing
+            setTimeout(() => {
+                // Deduct balance
+                userData.balance = userData.balance - selectedPackage.price;
+
+                // Update package info
+                userData.package = selectedPackage.id;
+                userData.availableSurveys = selectedPackage.surveys;
+                userData.packageExpiry = new Date(Date.now() + selectedPackage.days * 24 * 60 * 60 * 1000).toISOString();
+
+                // Save transaction
+                const transaction = {
+                    id: Date.now(),
+                    type: 'package_purchase',
+                    package: selectedPackage.id,
+                    amount: selectedPackage.price,
+                    surveys: selectedPackage.surveys,
+                    days: selectedPackage.days,
+                    time: new Date().toISOString()
+                };
+
+                let transactions = JSON.parse(localStorage.getItem('survey_transactions') || '[]');
+                transactions.push(transaction);
+                localStorage.setItem('survey_transactions', JSON.stringify(transactions));
+
+                // Save user data
+                localStorage.setItem('survey_user', JSON.stringify(userData));
+
+                // Close modal
+                closeModal();
+
+                // Show success
+                Swal.fire({
+                    title: 'Package Activated! 🎉',
+                    html: `
+                        <div style="text-align: center;">
+                            <i class="fas fa-crown" style="font-size: 48px; color: #ffd166;"></i>
+                            <h3 style="margin: 15px 0;">${selectedPackage.name} Package</h3>
+                            <p>${selectedPackage.surveys} surveys unlocked for ${selectedPackage.days} days</p>
+                            <p>Your balance: KSh ${userData.balance.toFixed(2)}</p>
+                        </div>
+                    `,
+                    icon: 'success',
+                    confirmButtonText: 'Start Surveying'
+                }).then(() => {
+                    // Update display
+                    updateUserDisplay();
+                    loadCurrentPackage();
+                    loadPackages();
+
+                    // Redirect to surveys
+                    setTimeout(() => {
+                        window.location.href = 'surveys_list.html';
+                    }, 500);
+                });
+
+            }, 1500);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Close modal when clicking outside
+            window.addEventListener('click', (event) => {
+                const modal = document.getElementById('purchaseModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Initialize with default selection
+        window.onload = function () {
+            // If user has a package, select it
+            if (userData.package) {
+                selectedPackage = packages.find(p => p.id === userData.package);
+            }
+        };
+    </script>
+</body>
+
+</html>

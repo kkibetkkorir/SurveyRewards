@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Surveys | SurveyEarn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-light: #10b981;
+            --secondary: #065f46;
+            --white: #ffffff;
+            --black: #1a1a1a;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--light-gray);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 60px 20px 20px;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .balance-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .filter-tabs {
+            display: flex;
+            background: var(--white);
+            border-bottom: 2px solid #eee;
+            overflow-x: auto;
+        }
+
+        .filter-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--gray);
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            min-width: 100px;
+            white-space: nowrap;
+        }
+
+        .filter-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .main-container {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .surveys-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .survey-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--primary);
+            position: relative;
+        }
+
+        .survey-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .survey-card.locked {
+            opacity: 0.7;
+            border-left-color: var(--gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .survey-card.locked::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(2px);
+        }
+
+        .survey-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .survey-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--black);
+            flex: 1;
+            margin-right: 15px;
+        }
+
+        .survey-reward {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 16px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .survey-reward.locked {
+            background: var(--gray);
+        }
+
+        .survey-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .survey-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .survey-description {
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .survey-requirements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .requirement-tag {
+            background: var(--light-gray);
+            color: var(--gray);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .survey-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .survey-time {
+            font-size: 14px;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .survey-btn {
+            padding: 10px 20px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .survey-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .survey-btn.locked {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        .survey-btn.locked:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+        }
+
+        .lock-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .lock-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .lock-content h4 {
+            color: var(--black);
+            margin-bottom: 10px;
+        }
+
+        .lock-content p {
+            color: var(--gray);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .upgrade-btn {
+            padding: 10px 20px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .package-info {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .package-info h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .package-info p {
+            color: var(--gray);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .package-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+
+        .package-stat {
+            text-align: center;
+        }
+
+        .package-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .package-stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .no-package-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .no-package-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .no-package-icon {
+            font-size: 60px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .no-package-content h2 {
+            color: var(--black);
+            margin-bottom: 15px;
+        }
+
+        .no-package-content p {
+            color: var(--gray);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 50px 15px 15px;
+            }
+
+            .main-container {
+                padding: 15px;
+            }
+
+            .surveys-container {
+                grid-template-columns: 1fr;
+            }
+
+            .survey-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .survey-title {
+                margin-right: 0;
+            }
+
+            .survey-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .survey-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="survey_home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1><i class="fas fa-poll"></i> Surveys</h1>
+            <div class="balance-display" id="userBalance">KSh 0.00</div>
+        </div>
+    </div>
+
+    <div class="filter-tabs">
+        <a href="#" class="filter-tab active">All Surveys</a>
+        <a href="#" class="filter-tab">High Paying</a>
+        <a href="#" class="filter-tab">Quick</a>
+        <a href="#" class="filter-tab">Trending</a>
+    </div>
+
+    <div class="main-container">
+        <div class="package-info" id="packageInfo" style="display: none;">
+            <!-- Package info will be loaded here -->
+        </div>
+
+        <div class="section-title">
+            <span>Available Surveys</span>
+            <span id="surveysCount">0 surveys</span>
+        </div>
+
+        <div class="surveys-container" id="surveysContainer">
+            <!-- Surveys will be loaded here -->
+        </div>
+    </div>
+
+    <!-- No Package Overlay -->
+    <div class="no-package-overlay" id="noPackageOverlay" style="display: none;">
+        <div class="no-package-content">
+            <div class="no-package-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h2>Premium Surveys Locked</h2>
+            <p>You need to purchase a premium package to access high-paying surveys. Each package unlocks a specific
+                number of surveys for a limited time period.</p>
+            <button class="survey-btn" onclick="goToPackages()" style="width: 100%;">
+                <i class="fas fa-crown"></i> View Packages
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Sample survey data
+        const surveys = [
+            {
+                id: 1,
+                title: "Consumer Electronics Preferences",
+                description: "Share your opinions on the latest smartphones, laptops, and other electronics. Help brands understand what features matter most to consumers.",
+                reward: 150,
+                time: "12 mins",
+                category: "Technology",
+                requirements: ["Age 18-45", "Owns smartphone", "Makes tech purchases"],
+                locked: false
+            },
+            {
+                id: 2,
+                title: "Fast Food Dining Habits",
+                description: "Tell us about your fast food preferences, frequency of visits, and what influences your choices. Your input helps restaurants improve.",
+                reward: 100,
+                time: "8 mins",
+                category: "Food & Beverage",
+                requirements: ["Age 18-60", "Eats out regularly"],
+                locked: false
+            },
+            {
+                id: 3,
+                title: "Streaming Services Comparison",
+                description: "Compare different streaming platforms and share what keeps you subscribed. Help media companies understand viewer preferences.",
+                reward: 200,
+                time: "15 mins",
+                category: "Entertainment",
+                requirements: ["Subscribes to streaming", "Watches 5+ hrs/week"],
+                locked: true
+            },
+            {
+                id: 4,
+                title: "Automotive Purchase Intentions",
+                description: "Share your thoughts on electric vehicles, car features, and purchase plans. Help automotive companies design better vehicles.",
+                reward: 250,
+                time: "18 mins",
+                category: "Automotive",
+                requirements: ["Plans car purchase", "Drives regularly"],
+                locked: true
+            },
+            {
+                id: 5,
+                title: "Health & Fitness App Usage",
+                description: "Tell us about your fitness routines and which apps you use. Help developers create better health solutions.",
+                reward: 120,
+                time: "10 mins",
+                category: "Health",
+                requirements: ["Uses fitness apps", "Exercises regularly"],
+                locked: false
+            },
+            {
+                id: 6,
+                title: "Online Shopping Experience",
+                description: "Share your online shopping habits, preferences, and pain points. Help e-commerce platforms improve user experience.",
+                reward: 180,
+                time: "14 mins",
+                category: "E-commerce",
+                requirements: ["Shops online monthly", "Makes 3+ purchases/month"],
+                locked: true
+            }
+        ];
+
+        // Load user data
+        const userData = JSON.parse(localStorage.getItem('survey_user') || '{}');
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function () {
+            updateUserDisplay();
+            checkPackageStatus();
+            loadSurveys();
+            setupEventListeners();
+        });
+
+        // Update user display
+        function updateUserDisplay() {
+            document.getElementById('userBalance').textContent =
+                `KSh ${(userData.balance || 0).toFixed(2)}`;
+        }
+
+        // Check package status
+        function checkPackageStatus() {
+            const noPackageOverlay = document.getElementById('noPackageOverlay');
+            const packageInfo = document.getElementById('packageInfo');
+
+            if (!userData.package) {
+                noPackageOverlay.style.display = 'flex';
+                packageInfo.style.display = 'none';
+            } else {
+                noPackageOverlay.style.display = 'none';
+                displayPackageInfo();
+            }
+        }
+
+        // Display package information
+        function displayPackageInfo() {
+            const packageInfo = document.getElementById('packageInfo');
+            const daysRemaining = calculateDaysRemaining();
+
+            packageInfo.style.display = 'block';
+            packageInfo.innerHTML = `
+                <h3>Active Package: ${userData.package.toUpperCase()}</h3>
+                <p>${userData.availableSurveys || 0} surveys remaining • ${daysRemaining} days left</p>
+                <div class="package-stats">
+                    <div class="package-stat">
+                        <div class="package-stat-value">${userData.availableSurveys || 0}</div>
+                        <div class="package-stat-label">Surveys Left</div>
+                    </div>
+                    <div class="package-stat">
+                        <div class="package-stat-value">${daysRemaining}</div>
+                        <div class="package-stat-label">Days Left</div>
+                    </div>
+                    <div class="package-stat">
+                        <div class="package-stat-value">KSh ${userData.totalEarnings || 0}</div>
+                        <div class="package-stat-label">Earned</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load surveys
+        function loadSurveys() {
+            const container = document.getElementById('surveysContainer');
+            const countElement = document.getElementById('surveysCount');
+            const availableSurveys = surveys.filter(survey => !survey.locked || userData.package);
+
+            container.innerHTML = '';
+
+            if (availableSurveys.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: var(--gray);">
+                        <i class="fas fa-clipboard-list" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <h3 style="margin-bottom: 10px;">No Surveys Available</h3>
+                        <p>Check back later for new surveys or upgrade your package for more options.</p>
+                    </div>
+                `;
+                countElement.textContent = '0 surveys';
+                return;
+            }
+
+            countElement.textContent = `${availableSurveys.length} surveys`;
+
+            availableSurveys.forEach(survey => {
+                const card = document.createElement('div');
+                const isLocked = survey.locked && userData.package;
+                const hasAccess = !survey.locked || userData.package;
+
+                card.className = `survey-card ${!hasAccess ? 'locked' : ''}`;
+
+                let lockOverlay = '';
+                if (!hasAccess) {
+                    lockOverlay = `
+                        <div class="lock-overlay">
+                            <div class="lock-content">
+                                <div class="lock-icon">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                                <h4>Premium Survey</h4>
+                                <p>Purchase a package to unlock this high-paying survey</p>
+                                <a href="survey_home.html" class="upgrade-btn">
+                                    <i class="fas fa-crown"></i> Upgrade Now
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    ${lockOverlay}
+                    <div class="survey-header">
+                        <div class="survey-title">${survey.title}</div>
+                        <div class="survey-reward ${!hasAccess ? 'locked' : ''}">
+                            KSh ${survey.reward}
+                        </div>
+                    </div>
+                    
+                    <div class="survey-meta">
+                        <div class="survey-meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>${survey.time}</span>
+                        </div>
+                        <div class="survey-meta-item">
+                            <i class="fas fa-tag"></i>
+                            <span>${survey.category}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="survey-description">${survey.description}</p>
+                    
+                    <div class="survey-requirements">
+                        ${survey.requirements.map(req =>
+                    `<span class="requirement-tag">${req}</span>`
+                ).join('')}
+                    </div>
+                    
+                    <div class="survey-footer">
+                        <div class="survey-time">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Available for 3 days</span>
+                        </div>
+                        <button class="survey-btn ${!hasAccess ? 'locked' : ''}" 
+                                onclick="${hasAccess ? `startSurvey(${survey.id})` : 'void(0)'}"
+                                ${!hasAccess ? 'disabled' : ''}>
+                            ${hasAccess ? 'Start Survey' : 'Locked'}
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Calculate days remaining
+        function calculateDaysRemaining() {
+            if (!userData.packageExpiry) return 0;
+            const expiry = new Date(userData.packageExpiry);
+            const now = new Date();
+            const diff = expiry - now;
+            return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+        }
+
+        // Start survey
+        function startSurvey(surveyId) {
+            const survey = surveys.find(s => s.id === surveyId);
+            if (!survey) return;
+
+            // Check if user has surveys remaining
+            if (userData.availableSurveys <= 0) {
+                alert('You have used all your available surveys. Please purchase a new package.');
+                return;
+            }
+
+            // Simulate survey start
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // Update user data
+                userData.availableSurveys = Math.max(0, userData.availableSurveys - 1);
+                userData.surveysCompleted = (userData.surveysCompleted || 0) + 1;
+                userData.totalEarnings = (userData.totalEarnings || 0) + survey.reward;
+                userData.balance = (userData.balance || 0) + survey.reward;
+                localStorage.setItem('survey_user', JSON.stringify(userData));
+
+                // Update display
+                updateUserDisplay();
+                displayPackageInfo();
+
+                // Show success message
+                alert(`Survey completed! You earned KSh ${survey.reward}. Your balance is now KSh ${userData.balance}.`);
+
+                // Reload surveys
+                loadSurveys();
+            }, 1500);
+        }
+
+        // Go to packages page
+        function goToPackages() {
+            window.location.href = 'survey_home.html';
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.filter-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    // In a real app, you would filter surveys here
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
